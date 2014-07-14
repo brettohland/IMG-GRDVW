@@ -76,6 +76,7 @@ const float kAnimationDuration = 0.25;
     
     NSNumber *cellData = self.dataSource[indexPath.row];
     
+    // Adding the image to the UIImageView is handeled in the cell.
     cell.imageName = [NSString stringWithFormat:@"img%@", [cellData stringValue]];
     cell.selectedIndicator.backgroundColor = [UIColor colorWithWhite:1.0 alpha:0.5];
     cell.selectedIndicator.alpha = 0;
@@ -96,6 +97,7 @@ didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
         [self animateToggleSelectedIndicatorOfCell:previouslySelectedCell];
         
         [self.collectionView performBatchUpdates:^{
+            // Swap data source as well as visually
             [self.dataSource exchangeObjectAtIndex:indexPath.row withObjectAtIndex:self.previouslySelectedIndexPath.row];
             [self.collectionView moveItemAtIndexPath:indexPath toIndexPath:self.previouslySelectedIndexPath];
             [self.collectionView moveItemAtIndexPath:self.previouslySelectedIndexPath toIndexPath:indexPath];
@@ -117,7 +119,8 @@ didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
 -(CGSize)collectionView:(UICollectionView *)collectionView
                  layout:(UICollectionViewLayout *)collectionViewLayout
  sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
-    
+
+    // Use the scale property to position everything as needed
     CGFloat scaledWidth = 50 * self.scale;
     NSInteger columns = floor(320 / scaledWidth);
     CGFloat totalSpacing = kCellMargin * (columns - 1);
@@ -144,7 +147,7 @@ didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
         UICollectionViewFlowLayout *updatedLayout = [[UICollectionViewFlowLayout alloc] init];
         updatedLayout.sectionInset = UIEdgeInsetsMake(40, 0, 0, 0);
         
-        __weak typeof(self) weakSelf = self;
+        __weak typeof(self) weakSelf = self; // Weakself dance, avoid those retention cycles.
         [self.collectionView setCollectionViewLayout:updatedLayout animated:YES completion:^(BOOL finished) {
             __strong typeof(self) strongSelf = weakSelf;
             [strongSelf.collectionView addGestureRecognizer:strongSelf.pinchGestureRecognizer];
@@ -161,7 +164,7 @@ didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
 };
 
 -(IBAction)formSheetWindowDoneButtonPressed:(UIStoryboardSegue *)sender {
-//    [self.collectionView.collectionViewLayout invalidateLayout];
+    // Called after the modal disappears
     [self.collectionView reloadData];
 }
 

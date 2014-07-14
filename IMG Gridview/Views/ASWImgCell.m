@@ -30,6 +30,8 @@
 }
 
 -(void) addImageToView {
+    // Figures out the size of image and adds it to the view.
+    // Can be 100, 155 or 320
     CGFloat currentSize = self.contentView.frame.size.height;
     NSString *finalImageName = [NSString stringWithFormat:@"%@.%d", self.imageName, (int) roundf(currentSize)];
     NSString *finalImagePath = [[NSBundle mainBundle] pathForResource:finalImageName ofType:@"jpg"];
